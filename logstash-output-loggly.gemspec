@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name            = 'logstash-output-loggly'
-  s.version         = '3.0.2'
+  s.version         = '3.0.2.msmfg-alpha'
   s.licenses        = ['Apache License (2.0)']
   s.summary         = "Got a loggly account? Use logstash to ship logs to Loggly!"
   s.description     = "This gem is a Logstash plugin required to be installed on top of the Logstash core pipeline using $LS_HOME/bin/logstash-plugin install gemname. This gem is not a stand-alone program"
@@ -24,4 +24,3 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'logstash-devutils'
   s.add_development_dependency 'logstash-codec-plain'
 end
-
