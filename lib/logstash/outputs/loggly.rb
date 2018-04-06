@@ -6,6 +6,7 @@ require "stud/buffer"
 # TODO(sissel): Move to something that performs better than net/http
 require "net/http"
 require "net/https"
+require "timeout"
 
 
 # Ugly monkey patch to get around <http://jira.codehaus.org/browse/JRUBY-5529>
@@ -13,7 +14,7 @@ Net::BufferedIO.class_eval do
     BUFSIZE = 1024 * 16
 
     def rbuf_fill
-      timeout(@read_timeout) {
+      ::Timeout.timeout(@read_timeout) {
         @rbuf << @io.sysread(BUFSIZE)
       }
     end
