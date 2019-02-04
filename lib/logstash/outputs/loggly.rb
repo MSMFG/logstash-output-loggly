@@ -154,7 +154,6 @@ class LogStash::Outputs::Loggly < LogStash::Outputs::Base
   private
   def handle_chunk(chunk, url)
     Thread.new(chunk, url) {|_chunk, _url|
-      retries = 5
 
       http = Net::HTTP::Proxy(@proxy_host, @proxy_port, @proxy_user, @proxy_password.value).new(_url.host, _url.port)
       if _url.scheme == 'https'
@@ -173,10 +172,9 @@ class LogStash::Outputs::Loggly < LogStash::Outputs::Base
           @logger.warn("HTTP error", :error => response.error!)
         end
       rescue Exception
-        retries -= 1
-        puts "#{Time.now} Failed to post data to #{_url.path}, #{retries} retries left, #{$!}"
+        puts "#{Time.now} Failed to post data to #{_url.path}, will retry until it works"
         sleep 5
-        retry if retries > 0
+        retry
       end
     }
   end
