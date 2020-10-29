@@ -109,8 +109,6 @@ class LogStash::Outputs::Loggly < LogStash::Outputs::Base
   end
 
   def flush(events, _teardown)
-    # Since we previously aborted anyway before actually sending and the 'finished' method
-    # is no longer present in the version of Logstash we use
     return if events.include?(LogStash::SHUTDOWN)
 
     chunks = stack_chunks(events)
@@ -177,16 +175,10 @@ class LogStash::Outputs::Loggly < LogStash::Outputs::Base
     if response.is_a?(Net::HTTPSuccess)
       @logger.info('Events sent to Loggly OK!')
     else
-      warn 'Response is not HTTPSuccess'
-      # Note this line raised an exception so logging
-      # would not happen
-      # @logger.warn('HTTP error', error: response.error!)
+      warn "Response is not HTTPSuccess: #{response.inspect}"
       raise
     end
   rescue Exception # rubocop:disable Lint/RescueException
-    # We continue to rescue the exception because the code historically did
-    # rather than risk other exceptions that naturally occur that may otherwise
-    # stop out production logger
     warn "#{Time.now} Failed to post data to #{path}, will retry until it works"
     sleep POST_RETRY_SEC
     retry
